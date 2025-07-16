@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Title</title>
+    <title>Test Form</title>
     <style>
       body {
         font-family: system-ui, -apple-system, sans-serif;
@@ -67,12 +67,44 @@
         cursor: pointer;
         margin-left: 0.75rem;
       }
+      .submit-btn:hover {
+        background-color: #1e40af;
+      }
+      .clear-btn:hover {
+        background-color: #f0f9ff;
+      }
+      #user-info {
+        border-left: 4px solid #2f5fa7;
+      }
     </style>
   </head>
   <body>
-    <div class="form-container">
+    <!-- Authentication Required View -->
+    <div id="auth-required-view" class="form-container" style="display: none">
+      <h1>Authentication Required</h1>
+      <p>Please sign in to access the form.</p>
+      <button onClick="auth.signIn()" class="submit-btn">Sign In</button>
+    </div>
+
+    <!-- Main Form - Only shown after authentication -->
+    <div id="main-form" class="form-container" style="display: none">
       <h1>Title</h1>
       <p>Description here.</p>
+
+      <div
+        id="user-info"
+        style="
+          margin-bottom: 1rem;
+          padding: 1rem;
+          background-color: #f0f9ff;
+          border-radius: 4px;
+        "
+      >
+        <p>
+          <strong>Welcome, <span id="username-display"></span>!</strong>
+        </p>
+        <button onClick="auth.signOut()" class="clear-btn">Sign Out</button>
+      </div>
 
       <form>
         <div class="field-group">
@@ -95,7 +127,6 @@
           />
         </div>
 
-        <button onClick="auth.signIn()">Log In</button>
         <button type="submit" class="submit-btn">Submit</button>
         <button type="button" class="clear-btn">Clear</button>
       </form>
@@ -114,20 +145,6 @@
       });
     </script>
 
-    <div>
-      <!-- Authenticated View --->
-      <div id="authenticated-view" style="display: none">
-        <ul>
-          <li id="username"></li>
-        </ul>
-        <button onClick="auth.signOut()">Log Out</button>
-      </div>
-      <!-- Un-Authenticated View --->
-      <div id="unauthenticated-view" style="display: none">
-        <button onClick="auth.signIn()">Log In</button>
-      </div>
-    </div>
-
     <script>
       (async () => {
         let user = undefined;
@@ -142,14 +159,29 @@
 
         // Update the UI accordingly.
         if (user) {
-          document.getElementById("authenticated-view").style.display = "block";
-          document.getElementById("unauthenticated-view").style.display =
-            "none";
-          document.getElementById("username").innerHTML = user.username;
+          // User is authenticated - show the form and hide auth required view
+          document.getElementById("main-form").style.display = "block";
+          document.getElementById("auth-required-view").style.display = "none";
+          document.getElementById("username-display").innerHTML = user.username;
+
+          // Get and log the JWT token to console
+          try {
+            const accessToken = await auth.getAccessToken();
+            console.log("JWT Access Token:", accessToken);
+
+            // You can also get ID token if needed
+            const idToken = await auth.getIDToken();
+            console.log("ID Token:", idToken);
+
+            // Log user information
+            console.log("User Info:", user);
+          } catch (error) {
+            console.error("Error getting tokens:", error);
+          }
         } else {
-          document.getElementById("authenticated-view").style.display = "none";
-          document.getElementById("unauthenticated-view").style.display =
-            "block";
+          // User is not authenticated - show auth required view
+          document.getElementById("main-form").style.display = "none";
+          document.getElementById("auth-required-view").style.display = "block";
         }
       })();
     </script>
