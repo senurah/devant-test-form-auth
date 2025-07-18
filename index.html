@@ -137,9 +137,10 @@
       var auth = AsgardeoAuth.AsgardeoSPAClient.getInstance();
 
       auth.initialize({
-        signInRedirectURL: "http://localhost:3000",
-        signOutRedirectURL: "http://localhost:3000",
+        signInRedirectURL: "http://localhost:3001",
+        signOutRedirectURL: "http://localhost:3001",
         clientID: "XRJSw9TtJgUdUVAOYfBCk6M9o4Ua",
+        // clientID:"uVzOY9weo7Q85VjUebP_6pu8vyUa",
         baseUrl: "https://api.asgardeo.io/t/formtest",
         scope: ["openid", "profile"],
       });
